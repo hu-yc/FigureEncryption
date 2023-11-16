@@ -2,12 +2,13 @@ version: '3'
 
 services:
   model:
-    container_name: apps
+    container_name: model
     restart: always
     build: apps
-    ports:
-      - "8111:8111"
-    command: gunicorn -w 1 -b 127.0.0.1:8111 wsgi:app_server
+    expose:
+      - "8111"
+#    command: gunicorn -w 1 -b 127.0.0.1:8111 wsgi:app_server
+    command: python wsgi.py
     volumes:
       - ./outputs:/outputs
       - ./logs:/usr/src/app/logs

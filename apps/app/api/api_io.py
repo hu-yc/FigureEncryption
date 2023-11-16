@@ -18,7 +18,7 @@ def encrypt_resnet(img_path):
     return encrypt_plot_path, performance_plot_path
 
 
-@app_server.route('/encrypt', methods=['POST'])
+@app_server.route('/model/encrypt', methods=['POST'])
 def encrypt():
     # obtain the image from request body
     img = request.files['img']
