@@ -7,20 +7,10 @@ services:
     build: apps
     expose:
       - "8111"
-#    command: gunicorn -w 1 -b 127.0.0.1:8111 wsgi:app_server
-    command: python wsgi.py
+    command: gunicorn -w 1 -b 0.0.0.0:8111 wsgi:app_server
     volumes:
       - ./outputs:/outputs
       - ./logs:/usr/src/app/logs
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: '0.50'
-#        reservations:
-#          devices:
-#            - driver: nvidia
-#              count: "all"
-#              capabilities: [gpu]
   nginx:
     container_name: nginx
     restart: always
