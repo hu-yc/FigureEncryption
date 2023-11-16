@@ -29,6 +29,6 @@ def encrypt():
     encrypt_path, decrypt_path, performance_path = encrypt_resnet(img_path)
     log.info("[encrypt] encrypt figure path: {}, performance figure path: {}".format(encrypt_path, performance_path))
     return jsonify({
-        'encrypt_fig_path': 'http://127.0.0.1:8099{}'.format(encrypt_path),
-        'performance_plot_path': 'http://127.0.0.1:8099{}'.format(performance_path)
+        'encrypt_fig': 'http://127.0.0.1:8099{}'.format(encrypt_path),
+        'performance_plot': 'http://127.0.0.1:8099{}'.format(performance_path)
     })

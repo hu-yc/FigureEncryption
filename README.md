@@ -48,7 +48,8 @@ def upload_img_to_request(img_path):
 **返回结果样例**
 ```json
 {
-    "encrypt_fig_path": "http://127.0.0.1:8099/outputs/encrypted_2f18a6f80faa00a1c78d13249ddf32b2_20231116050623.png",
-    "performance_plot_path": "http://127.0.0.1:8099/outputs/performance_2f18a6f80faa00a1c78d13249ddf32b2_20231116050624.png"
+    "encrypt_fig": "http://127.0.0.1:8099/outputs/encrypted_2f18a6f80faa00a1c78d13249ddf32b2_20231116050623.png",
+    "performance_plot": "http://127.0.0.1:8099/outputs/performance_2f18a6f80faa00a1c78d13249ddf32b2_20231116050624.png"
 }
 ```
+`encrypt_fig`展示的是加密后的图片，`performance_plot`展示的是加密性能评估结果。
