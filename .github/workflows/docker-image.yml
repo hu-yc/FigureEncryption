@@ -1,9 +1,9 @@
 name: Release Workflow
 
 on:
+  #  main分支的push操作会触发当前脚本的执行
   push:
-    tags:
-      - '*'
+    branches: [ main ]
 
 jobs:
   build:
