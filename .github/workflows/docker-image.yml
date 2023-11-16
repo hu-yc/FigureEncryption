@@ -17,8 +17,8 @@ jobs:
     - name: Build Docker image
       run: |
         docker-compose build
-        docker save encrypt_model:latest > ./img/encrypt_model.tar.gz
-        docker save encrypt_nginx:latest > ./img/encrypt_nginx.tar.gz
+        docker save encrypt_model:latest > ./img/encrypt_model.tar
+        docker save encrypt_nginx:latest > ./img/encrypt_nginx.tar
 
     - name: Archive production artifacts
       run: |
