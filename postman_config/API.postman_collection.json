@@ -1,0 +1,41 @@
+{
+	"info": {
+		"_postman_id": "ebb2cac0-0a59-41a9-9e5b-8e0de15b299b",
+		"name": "API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15217429"
+	},
+	"item": [
+		{
+			"name": "Encrypt",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "img",
+							"description": "uploading image file",
+							"type": "file",
+							"src": "/D:/Workspaces/test/GAN_API.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://{{HOST_IP}}:{{HOST_PORT}}/model/encrypt",
+					"protocol": "http",
+					"host": [
+						"{{HOST_IP}}"
+					],
+					"port": "{{HOST_PORT}}",
+					"path": [
+						"model",
+						"encrypt"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
