@@ -103,11 +103,12 @@ class CallResNet:
         log.info("[estimate_performance] start to estimate the performance of encryption and decryption")
         plt.figure()
         plt.annotate('encryption_time: {}, \ndecryption_time: {}, \ninformation_entropy: {}'.format(
-            encrypt_period, decrypt_period, entropy_value), xy=(0, 0), xytext=(0, 1.2),
-                     textcoords="axes fraction", fontsize=12,
-                     xycoords="axes fraction", ha="left", va="bottom")
-        log.info("[estimate_performance] adding the annotation: {}, {}, {}".format(encrypt_period,
-                                                                                   decrypt_period, entropy_value))
+            round(encrypt_period, 4), round(decrypt_period, 4), round(entropy_value, 4)),
+            xy=(0, 0), xytext=(0, 1.2), textcoords="axes fraction", fontsize=12, xycoords="axes fraction",
+            ha="left", va="bottom")
+        log.info("[estimate_performance] adding the annotation: {}, {}, {}".format(round(encrypt_period, 4),
+                                                                                   round(decrypt_period, 4),
+                                                                                   round(entropy_value, 4)))
         plt.title("Grayscale Histogram of Ciphertext Image")
         plt.xlabel("Pixel Value")
         plt.ylabel("Numbers of Pixels")
