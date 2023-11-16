@@ -2,7 +2,8 @@
 FROM tensorflow/tensorflow:1.15.2-py3
 WORKDIR /usr/src/installation
 COPY requirements.txt .
-RUN pip install --upgrade pip & pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
 ADD keras-contrib-master .
 RUN cd keras-contrib-master & python setup.py install
 ADD test /test
