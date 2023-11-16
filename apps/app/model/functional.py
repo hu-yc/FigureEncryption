@@ -2,6 +2,7 @@ import os
 import cv2
 import math
 import time
+import hashlib
 import numpy as np
 from PIL import Image
 from datetime import datetime
@@ -16,11 +17,21 @@ log = LogFactory.get_log('audit')
 
 class CallResNet:
     def __init__(self, img_input):
+        self.img_hash = None
         self.img_input = img_input # img:input path like as "/tmp/XXX.png"
         self.output_path = "/outputs"
         self.model = get_resnet()
         self.model.load_weights('./model/d_A_epoch100.h5', skip_mismatch=True, by_name=True)
         self.encrypted_figure = np.zeros((256, 256, 3), dtype=np.int32)
+
+    def cal_hash(self):
+        log.info("[cal_hash] start to calculate the md5 of input image")
+        md5 = hashlib.md5()
+        with open(self.img_input, 'rb') as f:
+            md5.update(f.read())
+        self.img_hash = md5.hexdigest()
+        log.info("[cal_hash] the md5 of input image is {}".format(self.img_hash))
+        return
 
     def reshape_fig(self):
         # check the cv2.imread() function
@@ -35,13 +46,13 @@ class CallResNet:
         log.info("[reshape_fig] reshape the input image to 256*256*3")
         return reshaped_img
 
-    @staticmethod
-    def initialized_seed():
+    def initialized_seed(self):
         # call the random seed generator in the api
         log.info("[initialized_seed] start to generate the random seed")
         raw_seed = np.random.randint(0, 20000001, size=(1, 256, 256, 3))
         random_seed = np.array(raw_seed, dtype=np.float32) / 10000000 - 1
         log.info("[initialized_seed] generate the random seed successfully")
+        self.cal_hash()
         return random_seed
 
     def generate_random_image(self, input_seed):
@@ -66,7 +77,8 @@ class CallResNet:
         log.info("[encrypt_fig] the period of encryption is {}s".format(encrypt_period))
         encrypted_fig = Image.fromarray(np.uint8(self.encrypted_figure))
         encrypted_fig_path = os.path.join(self.output_path,
-                                          "encrypted_fig_{}.png".format(datetime.now().strftime("%Y%m%d%H%M%S")))
+                                          "encrypted_{}_{}.png".format(self.img_hash,
+                                                                       datetime.now().strftime("%Y%m%d%H%M%S")))
         encrypted_fig.save(encrypted_fig_path)
         log.info("[encrypt_fig] save the encrypted image to {}".format(encrypted_fig_path))
         return encrypt_period, encrypted_fig_path
@@ -97,7 +109,13 @@ class CallResNet:
         end_time = time.time()
         decrypt_period = end_time - start_time
         log.info("[decrypt_fig] the period of decryption is {}s".format(decrypt_period))
-        return decrypt_period
+        decrypted_fig = Image.fromarray(np.uint8(self.encrypted_figure))
+        decrypted_fig_path = os.path.join(self.output_path,
+                                          "decrypted_{}_{}.png".format(self.img_hash,
+                                                                       datetime.now().strftime("%Y%m%d%H%M%S")))
+        # decrypted_fig.save(decrypted_fig_path)
+        # log.info("[encrypt_fig] save the encrypted image to {}".format(decrypted_fig_path))
+        return decrypt_period, decrypted_fig_path
 
     def estimate_performance(self, encrypt_period, decrypt_period, entropy_value, entropy_pp):
         log.info("[estimate_performance] start to estimate the performance of encryption and decryption")
@@ -116,7 +134,8 @@ class CallResNet:
         plt.xlim([0, 255])
         plt.ylim([0, 1600])
         performance_fig_path = os.path.join(self.output_path,
-                                            "performance_fig_{}.png".format(datetime.now().strftime("%Y%m%d%H%M%S")))
+                                            "performance_{}_{}.png".format(self.img_hash,
+                                                                           datetime.now().strftime("%Y%m%d%H%M%S")))
         plt.savefig(performance_fig_path, bbox_inches='tight', pad_inches=0)
         log.info("[estimate_performance] save the performance figure to {}".format(performance_fig_path))
         return performance_fig_path
