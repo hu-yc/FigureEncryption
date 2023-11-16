@@ -18,7 +18,7 @@
 							"key": "img",
 							"description": "uploading image file",
 							"type": "file",
-							"src": "/D:/Workspaces/test/GAN_API.png"
+							"src": []
 						}
 					]
 				},
