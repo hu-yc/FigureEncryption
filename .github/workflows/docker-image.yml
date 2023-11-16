@@ -1,0 +1,45 @@
+name: Release Workflow
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build Docker image
+      run: |
+        docker-compose build
+        docker save encrypt_model:latest > ./img/encrypt_model.tar.gz
+        docker save encrypt_nginx:latest > ./img/encrypt_nginx.tar.gz
+
+    - name: Archive production artifacts
+      run: |
+        tar -czvf encrypt_fig.tar.gz img/ logs/ outputs/ postman_config/ docker-compose.yaml README.md
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload project packages to Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./encrypt_fig.tar.gz
+        asset_name: encrypt_fig.tar.gz
+        asset_content_type: application/gzip
