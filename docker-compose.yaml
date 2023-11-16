@@ -5,6 +5,7 @@ services:
     container_name: model
     restart: always
     build: apps
+    image: encrypt_model
     expose:
       - "8111"
     command: gunicorn -w 1 -b 0.0.0.0:8111 wsgi:app_server
@@ -15,6 +16,7 @@ services:
     container_name: nginx
     restart: always
     build: nginx
+    image: encrypt_nginx
     ports:
       - "8099:80"
     depends_on:
