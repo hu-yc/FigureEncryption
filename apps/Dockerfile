@@ -5,7 +5,7 @@ COPY requirements.txt .
 RUN pip install --upgrade pip & pip install --no-cache-dir -r requirements.txt
 ADD keras-contrib-master .
 RUN cd keras-contrib-master & python setup.py install
-WORKDIR /usr/src/
+ADD test /test
 ADD app /usr/src/app
 WORKDIR /usr/src/app
 RUN rm -rf /usr/src/installation
