@@ -32,3 +32,14 @@ def get_resnet():
     model = Model(img_input, x)
     return model
 
+
+if __name__ == "__main__":
+    import numpy as np
+
+    model = get_resnet()
+    model.load_weights('../conf/d_A_epoch100.h5', skip_mismatch=True, by_name=True)
+    raw_seed = np.random.randint(0, 20000001, size=(1, 256, 256, 3))
+    random_seed = np.array(raw_seed, dtype=np.float32) / 10000000 - 1
+    latent_fake = model.predict(random_seed)
+    with open('../../test/sample.npy', 'wb') as f:
+        np.save(f, latent_fake)
