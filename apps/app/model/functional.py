@@ -2,6 +2,7 @@ import os
 import cv2
 import math
 import time
+import pathlib
 import hashlib
 import numpy as np
 from PIL import Image
@@ -18,10 +19,12 @@ log = LogFactory.get_log('audit')
 class CallResNet:
     def __init__(self, img_input):
         self.img_hash = None
+        self.raw_img_size = None
         self.img_input = img_input # img:input path like as "/tmp/XXX.png"
         self.output_path = "/outputs"
         self.model = get_resnet()
-        self.model.load_weights('./model/d_A_epoch100.h5', skip_mismatch=True, by_name=True)
+        self.img_filetype = pathlib.Path(self.img_input).suffix
+        self.model.load_weights('./conf/d_A_epoch100.h5', skip_mismatch=True, by_name=True)
         self.encrypted_figure = np.zeros((256, 256, 3), dtype=np.int32)
 
     def cal_hash(self):
@@ -33,13 +36,29 @@ class CallResNet:
         log.info("[cal_hash] the md5 of input image is {}".format(self.img_hash))
         return
 
+    @staticmethod
+    def resize_fig(raw_fig, raw_size, resize_shape):
+        raw_h, raw_w = raw_size
+        out_h, out_w = resize_shape
+        log.info("[resize_fig] resizing imaege from {}:{} to {}:{}".format(raw_h, raw_w, out_h, out_w))
+        if raw_h * raw_w >= out_h * out_w:
+            interpolation_method = cv2.INTER_AREA
+        else:
+            interpolation_method = cv2.INTER_CUBIC
+        log.info("[resize_fig] start to resize the input image")
+        resized_fig = cv2.resize(raw_fig, resize_shape, interpolation=interpolation_method)
+        return resized_fig
+
     def reshape_fig(self):
         # check the cv2.imread() function
         log.info("[reshape_fig] start to reshape the input image")
         img = cv2.imread(self.img_input)
+        # recording the raw image size
+        self.raw_img_size = img.shape[:2]
+        log.info("[reshape_fig] get the raw image size: {}".format(self.raw_img_size))
         cvt_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         log.info("[reshape_fig] convert the input image from BGR to RGB")
-        resized_img = cv2.resize(cvt_img, (256, 256))
+        resized_img = self.resize_fig(cvt_img, self.raw_img_size, (256, 256))
         log.info("[reshape_fig] resize the input image to 256*256")
         narray_img = np.array(resized_img)
         reshaped_img = narray_img.reshape(256, 256, 3)
@@ -109,12 +128,14 @@ class CallResNet:
         end_time = time.time()
         decrypt_period = end_time - start_time
         log.info("[decrypt_fig] the period of decryption is {}s".format(decrypt_period))
-        decrypted_fig = Image.fromarray(np.uint8(self.encrypted_figure))
+        resized_decrypted_fig = self.resize_fig(np.uint8(self.encrypted_figure), (256, 256), self.raw_img_size[::-1])
+        decrypted_fig = Image.fromarray(resized_decrypted_fig)
         decrypted_fig_path = os.path.join(self.output_path,
-                                          "decrypted_{}_{}.png".format(self.img_hash,
-                                                                       datetime.now().strftime("%Y%m%d%H%M%S")))
-        # decrypted_fig.save(decrypted_fig_path)
-        # log.info("[encrypt_fig] save the encrypted image to {}".format(decrypted_fig_path))
+                                          "decrypted_{}_{}.{}".format(self.img_hash,
+                                                                      datetime.now().strftime("%Y%m%d%H%M%S"),
+                                                                      self.img_filetype))
+        decrypted_fig.save(decrypted_fig_path)
+        log.info("[encrypt_fig] save the encrypted image to {}".format(decrypted_fig_path))
         return decrypt_period, decrypted_fig_path
 
     def estimate_performance(self, encrypt_period, decrypt_period, entropy_value, entropy_pp):
