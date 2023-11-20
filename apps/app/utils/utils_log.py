@@ -1,7 +1,10 @@
+import os
 import pathlib
 import logging
 from logging import StreamHandler
 from logging.handlers import RotatingFileHandler
+
+level_value = int(os.getenv('LOG_LEVEL', '20'))
 
 
 class LogFactory(object):
@@ -14,7 +17,7 @@ class LogFactory(object):
 
     @classmethod
     def get_log(cls, log_filename, max_bytes=10 * 1024 * 1024, backup_count=5):
-        log_level = 20
+        log_level = level_value
         log_filepath = '/var/log/apps/{}.log'.format(log_filename)
         logger = logging.getLogger(log_filename)
         if not logger.handlers:
@@ -35,7 +38,7 @@ class LogFactory(object):
         :param log_level: The level of log
         :return: The instance of stream logger
         """
-        log_level = 20
+        log_level = level_value
         logger = logging.getLogger('audit.log')
         if not logger.handlers:
             file_handler = StreamHandler()
