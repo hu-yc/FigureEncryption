@@ -77,9 +77,9 @@ class ImageInteract:
     def sliding_window_differential(self, raw_array, random_array, raw_size, random_size, flag):
         indexes_list = []
         times = range(math.floor(raw_size / random_size))
-        log.info("[sliding_window_differential] the number of times is {}".format(len(times)))
+        log.debug("[sliding_window_differential] the number of times is {}".format(len(times)))
         num_remain_elements = raw_size % random_size
-        log.info("[sliding_window_differential] the number of remain elements is {}".format(num_remain_elements))
+        log.debug("[sliding_window_differential] the number of remain elements is {}".format(num_remain_elements))
         for j in times:
             start_index = j * random_size + num_remain_elements
             end_index = start_index + random_size
@@ -114,8 +114,8 @@ class ImageInteract:
 
     def encrypt_fig(self, input_random_img):
         log.info("[encrypt_fig] start to encrypt the input image")
-        start_time = time.time()
         origin_img = self.cvt_img()
+        start_time = time.time()
         self.encrypted_figure = self.differential_fig(origin_img, input_random_img, 1)
         end_time = time.time()
         encrypt_period = end_time - start_time
