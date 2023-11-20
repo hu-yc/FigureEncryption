@@ -2,7 +2,7 @@ import os
 from flask import Flask, jsonify, request
 
 from utils.utils_log import LogFactory
-from model.Functional import CallResNet, ImageInteract
+from model.functional import CallResNet, ImageInteract
 
 app_server = Flask(__name__)
 
