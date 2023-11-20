@@ -8,10 +8,12 @@ services:
     image: encrypt_model
     expose:
       - "8111"
+    environment:
+      - HOST_IP=127.0.0.1
     command: gunicorn -w 1 -b 0.0.0.0:8111 wsgi:app_server
     volumes:
       - ./outputs:/outputs
-      - ./logs:/usr/src/app/logs
+      - ./logs:/var/log/apps
   nginx:
     container_name: nginx
     restart: always
