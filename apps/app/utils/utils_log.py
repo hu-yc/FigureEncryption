@@ -14,8 +14,8 @@ class LogFactory(object):
 
     @classmethod
     def get_log(cls, log_filename, max_bytes=10 * 1024 * 1024, backup_count=5):
-        log_level = 10
-        log_filepath = './logs/{}.log'.format(log_filename)
+        log_level = 20
+        log_filepath = '/var/log/apps/{}.log'.format(log_filename)
         logger = logging.getLogger(log_filename)
         if not logger.handlers:
             pathlib.Path(log_filepath).parent.mkdir(parents=True, exist_ok=True)
@@ -35,7 +35,7 @@ class LogFactory(object):
         :param log_level: The level of log
         :return: The instance of stream logger
         """
-        log_level = 10
+        log_level = 20
         logger = logging.getLogger('audit.log')
         if not logger.handlers:
             file_handler = StreamHandler()
