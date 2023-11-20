@@ -175,7 +175,7 @@ class ImageInteract:
         plt.ylabel("Numbers of Pixels")
         plt.bar(range(256), self.entropy_matrix, width=1)
         plt.xlim([0, 255])
-        plt.ylim([0, 1600])
+        plt.ylim([0, self.encrypted_figure.size/123])
         performance_fig_path = os.path.join(self.output_path,
                                             "performance_{}_{}.png".format(self.img_hash,
                                                                            datetime.now().strftime("%Y%m%d%H%M%S")))
